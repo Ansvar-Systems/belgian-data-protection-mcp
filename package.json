@@ -44,12 +44,16 @@
     "dev": "tsx src/http-server.ts",
     "start": "node dist/src/http-server.js",
     "seed": "npx tsx scripts/seed-sample.ts",
+    "ingest": "npx tsx scripts/ingest-apd.ts",
+    "ingest:resume": "npx tsx scripts/ingest-apd.ts --resume",
+    "ingest:dry-run": "npx tsx scripts/ingest-apd.ts --dry-run",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "lint": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.12",
     "@types/node": "^22.13.4",
+    "cheerio": "^1.0.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3"
   },

@@ -26,6 +26,7 @@ import {
   getGuideline,
   listTopics,
 } from "./db.js";
+import { buildCitation } from './citation.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -226,7 +227,16 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         if (!decision) {
           return errorContent(`Decision not found: ${parsed.reference}`);
         }
-        return textContent(decision);
+        return textContent({
+          ...(typeof decision === 'object' ? decision : { data: decision }),
+          _citation: buildCitation(
+            decision.reference || parsed.reference,
+            decision.title || decision.subject || parsed.reference,
+            'be_dp_get_decision',
+            { reference: parsed.reference },
+            decision.url || decision.source_url || null,
+          ),
+        });
       }
 
       case "be_dp_search_guidelines": {
@@ -246,7 +256,16 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         if (!guideline) {
           return errorContent(`Guideline not found: id=${parsed.id}`);
         }
-        return textContent(guideline);
+        return textContent({
+          ...(typeof guideline === 'object' ? guideline : { data: guideline }),
+          _citation: buildCitation(
+            guideline.reference || guideline.id?.toString() || String(parsed.id),
+            guideline.title || guideline.name || `Guideline ${parsed.id}`,
+            'be_dp_get_guideline',
+            { id: String(parsed.id) },
+            guideline.url || guideline.source_url || null,
+          ),
+        });
       }
 
       case "be_dp_list_topics": {

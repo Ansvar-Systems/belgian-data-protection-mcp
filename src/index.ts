@@ -227,14 +227,15 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         if (!decision) {
           return errorContent(`Decision not found: ${parsed.reference}`);
         }
+        const dec = decision as unknown as Record<string, unknown>;
         return textContent({
           ...(typeof decision === 'object' ? decision : { data: decision }),
           _citation: buildCitation(
-            decision.reference || parsed.reference,
-            decision.title || decision.subject || parsed.reference,
+            (dec.reference as string) || parsed.reference,
+            (dec.title as string) || (dec.subject as string) || parsed.reference,
             'be_dp_get_decision',
             { reference: parsed.reference },
-            decision.url || decision.source_url || null,
+            (dec.url as string) || (dec.source_url as string) || null,
           ),
         });
       }
@@ -256,14 +257,15 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         if (!guideline) {
           return errorContent(`Guideline not found: id=${parsed.id}`);
         }
+        const guide = guideline as unknown as Record<string, unknown>;
         return textContent({
           ...(typeof guideline === 'object' ? guideline : { data: guideline }),
           _citation: buildCitation(
-            guideline.reference || guideline.id?.toString() || String(parsed.id),
-            guideline.title || guideline.name || `Guideline ${parsed.id}`,
+            (guide.reference as string) || guideline.id?.toString() || String(parsed.id),
+            (guide.title as string) || (guide.name as string) || `Guideline ${parsed.id}`,
             'be_dp_get_guideline',
             { id: String(parsed.id) },
-            guideline.url || guideline.source_url || null,
+            (guide.url as string) || (guide.source_url as string) || null,
           ),
         });
       }
